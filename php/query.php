@@ -116,6 +116,15 @@ else{
 
 
 
+
+
+
+
+
+
+
+
+
 //delete product
 if(isset($_POST['deleteProduct'])){
     $id = $_POST['prodId'];
@@ -127,8 +136,56 @@ if(isset($_POST['deleteProduct'])){
 }
 
 
-//update product
 
+
+
+
+
+//update product
+if(isset($_POST['UpdateProduct'])){
+    $prodId = $_POST['prodId'];
+    $prodName = $_POST['prodName'];
+    $prodQuantity = $_POST['prodQuantity'];
+    $prodDesc = $_POST['prodDesc'];
+    $prodPrice = $_POST['prodPrice'];
+    $prodCatId = $_POST['prodCatId'];
+    if(!empty($_FILES['prodImage']['name'])){
+        $prodImage = $_FILES['prodImage']['name'];
+        $prodTmpName = $_FILES['prodImage']['tmp_name'];
+        $extension = pathinfo($prodImage, PATHINFO_EXTENSION);
+        $PathAddress = 'img/product/'.$prodImage;
+        if ($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "webp") {
+    if(move_uploaded_file($prodTmpName, $PathAddress)){
+        $query = $pdo ->prepare("update products set productName = :pname, productQuantity = :pquantity, productImage = :pimage, productPrice = :pprice, productCatId = :pcatid, productDesc = :pdesc where productId = :pid");
+        $query -> bindParam("pid", $prodId);
+        $query -> bindParam("pname", $prodName);
+        $query -> bindParam("pimage", $prodImage);
+        $query -> bindParam("pquantity", $prodQuantity);
+        $query -> bindParam("pprice", $prodPrice);
+        $query -> bindParam("pcatid", $prodCatId);
+        $query -> bindParam("pdesc", $prodDesc);
+
+        $query -> execute();
+        echo "<script>alert('product updated successfully');</script>";
+        // header("Location: " . $_SERVER['PHP_SELF']);
+        // exit;
+    
+    }
+    }else{
+        echo "<script>alert('invalid file type use only jpeg,png,jpg or webp');</script>";
+    }
+    }else{
+        $query = $pdo ->prepare("update products set productName = :pname, productQuantity = :pquantity, productPrice = :pprice, productCatId = :pcatid, productDesc = :pdesc where productId = :pid");
+        $query -> bindParam("pid", $prodId);
+        $query -> bindParam("pname", $prodName);
+        $query -> bindParam("pquantity", $prodQuantity);
+        $query -> bindParam("pprice", $prodPrice);
+        $query -> bindParam("pcatid", $prodCatId);
+        $query -> bindParam("pdesc", $prodDesc);
+        $query -> execute();
+        echo "<script>alert('product updated successfully');</script>";
+    }
+}
 
 
 ?>
